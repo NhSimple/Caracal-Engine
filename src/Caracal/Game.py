@@ -14,6 +14,7 @@ class Game:
         self.after_update=[]
         self.during_input=[]
         self.inputs=[]
+        self.surface = None
     
 
     
@@ -37,6 +38,11 @@ class Game:
         self.before_update.append(lambda: self.pygame.display.get_surface().blit(Object.sprite, (Object.x, Object.y)))
         self.before_update.append(Object.update)
         self.during_input.append(Object.input_update)
+    
+    def initialize_scene(self, Scene):
+        for tile in Scene.tiles:
+            self.surface.blit(tile[0],(tile[1],tile[2]))
+                            #(texture, x-axis, y-axis.)
         
 
     def run(self):
@@ -44,7 +50,7 @@ class Game:
 
     def run_func(self):
         pygame = self.pygame
-        self.window.set_mode((self.x,self.y))
+        self.surface = self.window.set_mode((self.x,self.y))
         self.window.set_caption(self.window_name)
         logger.info("Pygame thread started.")
         while True:

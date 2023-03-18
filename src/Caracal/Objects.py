@@ -3,9 +3,8 @@ logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 
 class GameObject:
-    """ 
-    when inheriting super.init me.      
-
+    """    
+    
     """
     def __init__(self, sprite,x=0,y=0):
         import pygame
