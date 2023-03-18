@@ -15,6 +15,8 @@ class Game:
         self.during_input=[]
         self.inputs=[]
         self.surface = None
+        self.clock = pygame.time.Clock()
+        self.max_fps = 60
     
 
     
@@ -35,7 +37,7 @@ class Game:
             task()
 
     def instantiate(self, Object):
-        self.before_update.append(lambda: self.pygame.display.get_surface().blit(Object.sprite, (Object.x, Object.y)))
+        self.before_update.append(lambda: self.window.blit(Object.sprite, (Object.x, Object.y)))
         self.before_update.append(Object.update)
         self.during_input.append(Object.input_update)
     
@@ -43,7 +45,7 @@ class Game:
         for tile in Scene.tiles:
             self.surface.blit(tile[0],(tile[1],tile[2]))
                             #(texture, x-axis, y-axis.)
-        
+        self.before_update.append(lambda: self.window.set_caption(f"{self.window_name} - FPS: {self.fps:.2f}"))
 
     def run(self):
         Thread(target=self.run_func).start()
@@ -55,6 +57,8 @@ class Game:
         logger.info("Pygame thread started.")
         while True:
             self.preflip_tasks()
+            self.dt = self.clock.tick(self.max_fps)
+            self.fps = self.clock.get_fps()
             pygame.display.flip()
 
             self.inputs = pygame.event.get()

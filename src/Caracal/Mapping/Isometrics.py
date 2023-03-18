@@ -31,6 +31,7 @@ class IsometricScene:
                 # Save the position of the tile as a tuple
                 self.tiles.append((pygame.transform.rotozoom(pygame.transform.scale(pygame.image.load(self.texture[self.map[row][col]]),(self.tile_width,self.tile_height)), 0, 1), iso_x, iso_y, True))
                 print(self.tiles)
+                # We should change this, saving the same sprites over and over wastes performance and memory.
             
 
       
