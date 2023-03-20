@@ -14,7 +14,7 @@ class GameObject:
         try: 
             self.sprite = pygame.image.load(sprite)
         except Exception as e:
-            logger.critical(f"Sprite annot be loaded: {e}")
+            logger.critical(f"Sprite cannot be loaded: {e}")
         
     
 

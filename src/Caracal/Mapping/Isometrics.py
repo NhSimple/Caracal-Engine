@@ -39,7 +39,7 @@ class IsometricScene:
                 iso_y = (col + row) * self.tile_half_height/4
                 # Save the position of the tile as a tuple
                 self.tiles.append((pygame.transform.rotate(pygame.transform.scale(pygame.image.load(self.texture[self.map[row][col]]),(self.tile_width,self.tile_height)), 0), self.camera_x+iso_x, self.camera_y+iso_y+20))
-                
+                # We have to be able to move the camera so despite the performance hit, it would be nessecary to utilize a camera.
     
 
       
