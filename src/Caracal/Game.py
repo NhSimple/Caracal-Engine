@@ -15,6 +15,7 @@ class Game:
         self.during_input=[]
         self.inputs=[]
         self.surface = None
+        self.Scene = None
     
 
     
@@ -42,6 +43,10 @@ class Game:
     def initialize_scene(self, Scene):
         for tile in Scene.tiles:
             self.surface.blit(tile[0],(tile[1],tile[2]))
+        Scene.tiles.clear()
+        Scene.calculate()
+
+        self.Scene=Scene
                             #(texture, x-axis, y-axis.)
         
 
@@ -56,10 +61,20 @@ class Game:
         while True:
             self.preflip_tasks()
             pygame.display.flip()
+            self.surface.fill((0, 0, 0))
 
             self.inputs = pygame.event.get()
+            pressed = pygame.key.get_pressed()
+            if self.Scene is not None:
+                self.initialize_scene(self.Scene)
             for input in self.inputs:
+                if self.Scene is not None:
+                    self.Scene.movement_control(pressed)
                 self.input_tasks()
+                
                 if input.type == pygame.QUIT:
                     return
+            
+
+
 
