@@ -44,7 +44,8 @@ class Game:
     
     def initialize_scene(self, Scene):
         for tile in Scene.tiles:
-            self.surface.blit(tile[0],(tile[1],tile[2]))
+            print(tile[0])
+            self.surface.blit(tile[0],(Scene.camera_x+tile[1], Scene.camera_y+tile[2]))
         Scene.tiles.clear()
         Scene.calculate()
 
