@@ -20,12 +20,10 @@ class Game:
         self.max_fps = 60
     
 
-    
-
     def preflip_tasks(self):
         #accepts functions as tasks to be handled BEFORE updating frames, in a list.
         for task in self.before_update:
-                task()
+            task()
     
     def postflip_tasks(self):
         #accepts functions as tasks to be handled AFTER updating frames, in a list.
@@ -44,14 +42,12 @@ class Game:
     
     def initialize_scene(self, Scene):
         for tile in Scene.tiles:
-            print(tile[0])
-            self.surface.blit(tile[0],(Scene.camera_x+tile[1], Scene.camera_y+tile[2]))
+            self.surface.blit(tile[0], (Scene.camera_x+tile[1], Scene.camera_y+tile[2]))
         Scene.tiles.clear()
         Scene.calculate()
-
         self.Scene=Scene
                             #(texture, x-axis, y-axis.)
-        self.before_update.append(lambda: self.window.set_caption(f"{self.window_name} - FPS: {self.fps:.2f}"))
+        self.before_update.append(lambda: self.window.set_caption(f"{self.window_name} - FPS: {self.fps:.2f} - dt: {self.dt:.2f}"))
 
     def run(self):
         Thread(target=self.run_func).start()
@@ -65,13 +61,11 @@ class Game:
             self.preflip_tasks()
             self.dt = self.clock.tick(self.max_fps)
             self.fps = self.clock.get_fps()
-            pygame.display.flip()
+            pygame.display.update()
             self.surface.fill((0, 0, 0))
 
             self.inputs = pygame.event.get()
             pressed = pygame.key.get_pressed()
-            if self.Scene is not None:
-                self.initialize_scene(self.Scene)
             for input in self.inputs:
                 if self.Scene is not None:
                     self.Scene.movement_control(pressed)
