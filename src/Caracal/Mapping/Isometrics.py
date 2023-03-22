@@ -20,9 +20,9 @@ class IsometricScene:
     def movement_control(self, pressed):
         pygame = self.pygame
         if pressed[pygame.K_w]:
-            self.camera_y -= 10
-        if pressed[pygame.K_s]:
             self.camera_y += 10
+        if pressed[pygame.K_s]:
+            self.camera_y -= 10
         if pressed[pygame.K_a]:
             self.camera_x += 10
         if pressed[pygame.K_d]:
@@ -35,11 +35,10 @@ class IsometricScene:
             for col in range(len(self.map[row])):
                 # print(self.texture)
                 # Calculate the position of the tile in isometric coordinates
-                iso_x = (col - row) * self.tile_half_width
+                iso_x = (col - row) * self.tile_half_width/2
                 iso_y = (col + row) * self.tile_half_height/4
                 # Save the position of the tile as a tuple
-                self.tiles.append(((self.texture[self.map[row][col]]), iso_x, iso_y))
-                # We have to be able to move the camera so despite the performance hit, it would be nessecary to utilize a camera.
+                self.tiles.append([(self.texture[self.map[row][col]]), iso_x, iso_y])
     
 
       
