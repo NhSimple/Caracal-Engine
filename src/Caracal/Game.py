@@ -72,7 +72,7 @@ class Game:
         logger.info("Pygame thread started.")
         if self.Scene is not None:
             self.initialize_scene(self.Scene)
-            self.draw_scene(self.Scene)
+            #self.draw_scene(self.Scene)
         logger.info("Ok")
         while True:
             self.screen.fill((0,0,0))
@@ -96,7 +96,7 @@ class Game:
                 if input.type == pygame.KEYDOWN:
                     if input.key == pygame.K_F1:
                         self.Scene = self.initialize_scene(self.Scene)
-                        self.draw_scene(self.Scene)
+                        #self.draw_scene(self.Scene)
             
             self.postflip_tasks()  # not sure if this is the currect place for this 
 
