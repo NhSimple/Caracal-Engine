@@ -53,14 +53,26 @@ class Game:
 
     @lru_cache
     def initialize_scene(self, Scene):
-        Scene.tiles.clear()
-        Scene.calculate()
         self.Scene = Scene
-        self.before_update.append(lambda: self.screen.blit(self.surface, (Scene.camera_x, Scene.camera_y)))
+        self.before_update.append(lambda: self.screen.blit(self.surface, (0, 0)))
+            
+            
+    @lru_cache
+    def draw_scene(self, camera_x, camera_y):
+        #parameters: camera_x, camera_y added so that the lru cache can update when these values update.
+        Scene = self.Scene
+        self.surface.fill((0,0,0))
+
+        Scene.calculate()
+        
         for tile, iso_x, iso_y in self.Scene.tiles:
-            x = self.Scene.camera_x + iso_x
-            y = self.Scene.camera_y + iso_y
-            self.surface.blit(Scene.texture[tile], (x, y))
+            x = Scene.camera_x + iso_x
+            y = Scene.camera_y + iso_y
+
+            self.surface.blit(Scene.texture[tile], (x, y))   
+        Scene.tiles.clear()
+        
+
 
     def run(self):
         Thread(target=self.run_func).start()
@@ -70,33 +82,38 @@ class Game:
         self._init_window()
         self.window.set_caption(self.window_name)
         logger.info("Pygame thread started.")
-        if self.Scene is not None:
-            self.initialize_scene(self.Scene)
-            #self.draw_scene(self.Scene)
+
         logger.info("Ok")
         while True:
-            self.screen.fill((0,0,0))
+            
             self.preflip_tasks()
             self.dt = self.clock.tick(self.max_fps)
             self.fps = self.clock.get_fps()
-            pygame.display.update()
+            if self.Scene is not None:
 
+                self.draw_scene(self.Scene.camera_x, self.Scene.camera_y)
+                
+            
+            
+            self.window.update()
+            
             self.inputs = pygame.event.get()
             pressed = pygame.key.get_pressed()
 
+                #seperate conditional statements as you dont want to update the scene every key press.
             for input in self.inputs:
                 if self.Scene is not None:
                     self.Scene.movement_control(pressed)
-                else:
-                    pass
+
                 self.input_tasks()
                 
                 if input.type == pygame.QUIT:
                     return
                 if input.type == pygame.KEYDOWN:
                     if input.key == pygame.K_F1:
-                        self.Scene = self.initialize_scene(self.Scene)
-                        #self.draw_scene(self.Scene)
+                        #consider removing this function call unless its a debug thing.
+                        self.draw_scene()
+            
             
             self.postflip_tasks()  # not sure if this is the currect place for this 
 

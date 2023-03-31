@@ -15,6 +15,7 @@ class IsometricScene:
         self.texture = texture
         self.camera_x=0
         self.camera_y=0
+        self.updated = False
         self._load_texture_lazy()
         self.calculate()
 
