@@ -47,6 +47,7 @@ class IsometricScene:
                 
                 iso_x = (col - row) * self.tile_half_width / 2
                 iso_y = (col + row) * self.tile_half_height / 4
+                iso_x -= self.tile_half_width
 
                 # Save the position of the tile as a tuple
                 self.tiles.append([self.map[row][col], iso_x, iso_y])  # maybe only save just the tile, not the iso pos?
@@ -59,10 +60,14 @@ class IsometricScene:
         # BUG: Since the Isometric Rendering is from the topleft of an tile, 
         # the camera doesn't seem fully be in the center of the scene, the half width of tile affects the Isometric Rendering
         # This function is correct, but we should fix rendering for it to work properly 
-        iso_x = ((mouse_x / self.tile_half_width) + (mouse_y / self.tile_half_height)) # / 2
-        iso_y = ((mouse_y / self.tile_half_height) - (mouse_x / self.tile_half_width)) # / 2
+        
+        iso_x = (mouse_x / self.tile_half_width + mouse_y / self.tile_half_height)
+        iso_y = ((mouse_y / self.tile_half_height) - (mouse_x / self.tile_half_width / 2)) / 2
+        # iso_x = (mouse_x / self.tile_half_width + mouse_y / self.tile_half_height)
+        # iso_y = (mouse_y / self.tile_half_height - (mouse_x / self.tile_half_width)) / 2
+
         iso_x = round(iso_x)
-        iso_y = round(iso_y)
+        iso_y = round(iso_y * 3) # multiplying by 3 is important
         # I'm not sure if this is correct, but it seems to work
 
         return iso_x, iso_y

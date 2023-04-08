@@ -3,6 +3,7 @@ import coloredlogs, logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
 from functools import lru_cache
+import random
 
 class Game:
     def __init__(self, window_name="Caracal Window", width=400, height=640):
@@ -69,7 +70,13 @@ class Game:
             x = Scene.camera_x + iso_x
             y = Scene.camera_y + iso_y
 
-            self.surface.blit(Scene.texture[tile], (x, y))   
+            self.surface.blit(Scene.texture[tile], (x, y))
+        
+        #for tile, iso_x, iso_y in self.Scene.tiles:
+        #    x = Scene.camera_x + iso_x
+        #    y = Scene.camera_y + iso_y
+
+        #    self.pygame.draw.rect(self.surface, "red", (x, y, 4, 4))
         Scene.tiles.clear()
         
 
