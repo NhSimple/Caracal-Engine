@@ -42,10 +42,10 @@ class Game:
         for task in self.after_update:
             task()
 
-    def input_tasks(self):
+    def input_tasks(self, pressed):
         # accepts functions as tasks to be handled DURING the pygame event loop.
         for task in self.during_input:
-            task()
+            task(pressed)
 
     def instantiate(self, Object):
         self.before_update.append(lambda: self.screen.blit(
@@ -115,13 +115,12 @@ class Game:
 
             self.inputs = pygame.event.get()
             pressed = pygame.key.get_pressed()
+            self.input_tasks(pressed)
+            if self.Scene is not None:
+                self.Scene.movement_control(pressed)
 
             # seperate conditional statements as you dont want to update the scene every key press.
             for input in self.inputs:
-                if self.Scene is not None:
-                    self.Scene.movement_control(pressed)
-
-                self.input_tasks()
 
                 if input.type == pygame.QUIT:
                     return
