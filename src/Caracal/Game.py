@@ -20,7 +20,7 @@ class Game:
         self.surface = pygame.Surface((width, height))
         self.Scene = None
         self.clock = pygame.time.Clock()
-        self.max_fps = 0
+        self.max_fps = 60 # 0
         self._lazy_loads = []
 
     def preflip_tasks(self):
