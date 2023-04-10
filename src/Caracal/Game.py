@@ -15,6 +15,7 @@ class Game:
         self.window_name = window_name
         self.SC_WIDTH = width
         self.SC_HEIGHT = height
+        self.ui_queue = []
         self.before_update = []
         self.after_update = []
         self.during_input = []
@@ -42,10 +43,15 @@ class Game:
         for task in self.after_update:
             task()
 
-    def input_tasks(self, pressed):
+    def input_tasks(self, pressed, pygame):
         # accepts functions as tasks to be handled DURING the pygame event loop.
         for task in self.during_input:
             task(pressed)
+
+    def ui_tasks(self):
+        # accepts functions as tasks to be drawn LAST amongst all other blits and serves the purpose of interactable ui.
+        for task in self.ui_queue:
+            task()
 
     def instantiate(self, Object):
         self.before_update.append(lambda: self.screen.blit(
@@ -56,6 +62,7 @@ class Game:
     def _init_window(self):
         logger.info("Initializing window...")
         self.screen = self.window.set_mode((self.SC_WIDTH, self.SC_HEIGHT))
+        logger.info("Initializing ui...")
         self.after_update.append(lambda: self.window.set_caption(
             f"{self.window_name} - FPS: {self.fps:.2f} - dt: {self.dt:.2f}"))
         logger.info(f"Starting Load Tasks...")
@@ -67,6 +74,19 @@ class Game:
         self.Scene = Scene
         self.before_update.append(
             lambda: self.screen.blit(self.surface, (0, 0)))
+
+    def initialize_text(self, text):
+        self.ui_queue.append(
+            # given screen and not surface because it is supposed to be higher than scene in the hierarchy.
+            lambda: self.screen.blit(text.text, text.text_rect))
+
+    def initialize_button(self, button):
+        self.ui_queue.append(
+            lambda: self.pygame.draw.rect(
+                self.screen, button.color, button.rect)
+        )
+        self.during_input.append(
+            lambda x: button.inputhandler(self.pressed, self.pygame))
 
     @lru_cache
     def draw_scene(self, camera_x, camera_y):
@@ -80,13 +100,14 @@ class Game:
             x = Scene.camera_x + iso_x
             y = Scene.camera_y + iso_y
 
-            self.surface.blit(Scene.texture[tile], (x, y))   
-        
-        self.saved_background = self.pygame.image.save(self.surface, ".caracal/saved_bg.png")
+            self.surface.blit(Scene.texture[tile], (x, y))
+
+        self.saved_background = self.pygame.image.save(
+            self.surface, ".caracal/saved_bg.png")
         self.saved_background = self.pygame.image.load(".caracal/saved_bg.png")
         # the goal of this is to turn a bunch of tiny tiles into one big image so that it can blit faster.
 
-        #for tile, iso_x, iso_y in self.Scene.tiles:
+        # for tile, iso_x, iso_y in self.Scene.tiles:
         #    x = Scene.camera_x + iso_x
         #    y = Scene.camera_y + iso_y
         #    self.pygame.draw.rect(self.surface, "red", (x, y, 4, 4))
@@ -114,13 +135,15 @@ class Game:
 
                 self.surface.blit(self.saved_background, (0, 0))
 
+            self.ui_tasks()
+
             self.window.update()
 
             self.inputs = pygame.event.get()
-            pressed = pygame.key.get_pressed()
-            self.input_tasks(pressed)
+            self.pressed = pygame.key.get_pressed()
+            self.input_tasks(self.pressed, self.pygame)
             if self.Scene is not None:
-                self.Scene.movement_control(pressed)
+                self.Scene.movement_control(self.pressed, self.pygame)
 
             # seperate conditional statements as you dont want to update the scene every key press.
             for input in self.inputs:
@@ -131,5 +154,4 @@ class Game:
                     if input.key == pygame.K_F1:
                         # will be useful soon
                         pass
-
             self.postflip_tasks()  # not sure if this is the currect place for this

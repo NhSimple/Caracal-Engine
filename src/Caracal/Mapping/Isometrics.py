@@ -28,15 +28,14 @@ class IsometricScene:
         else:
             self.app._lazy_loads.append((self._load_texture_lazy, keep_alpha))
 
-    def movement_control(self, pressed):
-        pygame = self.pygame
-        if pressed[pygame.K_w]:
+    def movement_control(self, pressed, key):
+        if pressed[key.K_w]:
             self.camera_y += 10
-        if pressed[pygame.K_s]:
+        if pressed[key.K_s]:
             self.camera_y -= 10
-        if pressed[pygame.K_a]:
+        if pressed[key.K_a]:
             self.camera_x += 10
-        if pressed[pygame.K_d]:
+        if pressed[key.K_d]:
             self.camera_x -= 10
 
     def calculate(self):  # TODO: There shouldnt be both self.tiles and self.map, there should only be one
@@ -69,7 +68,7 @@ class IsometricScene:
         # iso_y = (mouse_y / self.tile_half_height - (mouse_x / self.tile_half_width)) / 2
 
         iso_x = round(iso_x)
-        iso_y = round(iso_y * 3) # multiplying by 3 is important
+        iso_y = round(iso_y * 3)  # multiplying by 3 is important
         # I'm not sure if this is correct, but it seems to work
 
         return iso_x, iso_y
