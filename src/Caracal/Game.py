@@ -1,27 +1,22 @@
 from functools import lru_cache
-from threading import Thread
 import os
 import coloredlogs
 import logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
+import pygame
 
 
 class Game:
     def __init__(self, window_name="Caracal Window", width=400, height=640):
-        import pygame
-        self.pygame = pygame
-        self.window = pygame.display
         self.window_name = window_name
-        self.SC_WIDTH = width
-        self.SC_HEIGHT = height
+        self.SC_WIDTH, self.SC_HEIGHT = (width, height)
         self.ui_queue = []
         self.before_update = []
         self.after_update = []
         self.during_input = []
         self.inputs = []
         self.screen = None
-        self.surface = pygame.Surface((width, height))
         self.Scene = None
         self.clock = pygame.time.Clock()
         self.max_fps = 600  # 0
@@ -61,9 +56,9 @@ class Game:
 
     def _init_window(self):
         logger.info("Initializing window...")
-        self.screen = self.window.set_mode((self.SC_WIDTH, self.SC_HEIGHT))
+        self.screen = pygame.display.set_mode((self.SC_WIDTH, self.SC_HEIGHT))
         logger.info("Initializing ui...")
-        self.after_update.append(lambda: self.window.set_caption(
+        self.after_update.append(lambda: pygame.display.set_caption(
             f"{self.window_name} - FPS: {self.fps:.2f} - dt: {self.dt:.2f}"))
         logger.info(f"Starting Load Tasks...")
         for task in self._lazy_loads:
@@ -72,8 +67,9 @@ class Game:
     @lru_cache
     def initialize_scene(self, Scene):
         self.Scene = Scene
+        self.Scene.cache_surface()
         self.before_update.append(
-            lambda: self.screen.blit(self.surface, (0, 0)))
+            lambda: self.screen.blit(self.Scene.surface, (-self.Scene.camera_x, -self.Scene.camera_y)))
 
     def initialize_text(self, text):
         self.ui_queue.append(
@@ -82,72 +78,46 @@ class Game:
 
     def initialize_button(self, button):
         self.ui_queue.append(
-            lambda: self.pygame.draw.rect(
+            lambda: pygame.draw.rect(
                 self.screen, button.color, button.rect)
         )
         self.during_input.append(
-            lambda x: button.inputhandler(self.pressed, self.pygame))
+            lambda x: button.inputhandler(self.pressed, pygame))
 
-    @lru_cache
+    # @lru_cache
     def draw_scene(self, camera_x, camera_y):
         # parameters: camera_x, camera_y added so that the lru cache can update when these values update.
-        Scene = self.Scene
-        self.surface.fill((0, 0, 0))
-
-        Scene.calculate()
-
-        for tile, iso_x, iso_y in self.Scene.tiles:
-            x = Scene.camera_x + iso_x
-            y = Scene.camera_y + iso_y
-
-            self.surface.blit(Scene.texture[tile], (x, y))
-
-        self.saved_background = self.pygame.image.save(
-            self.surface, ".caracal/saved_bg.png")
-        self.saved_background = self.pygame.image.load(".caracal/saved_bg.png")
-        # the goal of this is to turn a bunch of tiny tiles into one big image so that it can blit faster.
-
-        # for tile, iso_x, iso_y in self.Scene.tiles:
-        #    x = Scene.camera_x + iso_x
-        #    y = Scene.camera_y + iso_y
-        #    self.pygame.draw.rect(self.surface, "red", (x, y, 4, 4))
-        Scene.tiles.clear()
+        self.screen.fill("black")
+        
+        self.screen.blit(self.Scene.surface, (-camera_x, -camera_y))
+        # self.Scene.tiles.clear()
 
     def run(self):
-        Thread(target=self.run_func).start()
+        self.run_func()
 
     def run_func(self):
-        pygame = self.pygame
-        self._init_window()
-        self.window.set_caption(self.window_name)
+        pygame.display.set_caption(self.window_name)
         logger.info("Pygame thread started.")
-
-        logger.info("Ok")
+        self.Scene.cache_surface()
+        logger.info("OK")
         while True:
-
             self.preflip_tasks()
             self.dt = self.clock.tick(self.max_fps)
             self.fps = self.clock.get_fps()
             if self.Scene is not None:
-
                 self.draw_scene(self.Scene.camera_x, self.Scene.camera_y)
-                # draw_scene() only runs on update due to lru caching.
-
-                self.surface.blit(self.saved_background, (0, 0))
-
+                #self.surface.blit(self.saved_background, (0, 0))
             self.ui_tasks()
-
-            self.window.update()
+            pygame.display.update()
 
             self.inputs = pygame.event.get()
             self.pressed = pygame.key.get_pressed()
-            self.input_tasks(self.pressed, self.pygame)
+            self.input_tasks(self.pressed, pygame)
             if self.Scene is not None:
-                self.Scene.movement_control(self.pressed, self.pygame)
+                self.Scene.movement_control(self.pressed, pygame)
 
             # seperate conditional statements as you dont want to update the scene every key press.
             for input in self.inputs:
-
                 if input.type == pygame.QUIT:
                     return
                 if input.type == pygame.KEYDOWN:
