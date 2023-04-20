@@ -1,13 +1,21 @@
+import pygame
+import time
+from threading import Thread
 from functools import lru_cache
 import os
 import coloredlogs
 import logging
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG', logger=logger)
-import pygame
 
 
 class Game:
+    """ 
+    Must run at 60 fps or fixed update must be set to less than 60 times a second.
+    this cannot be because if fps dips below 60 fps updates halt proper too.
+    So you must make sure to keep the game performant.
+    """
+
     def __init__(self, window_name="Caracal Window", width=400, height=640):
         self.window_name = window_name
         self.SC_WIDTH, self.SC_HEIGHT = (width, height)
@@ -21,6 +29,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.max_fps = 600  # 0
         self._lazy_loads = []
+        self._last_update_time = time.time()
 
         if os.path.exists(".caracal"):
             pass
@@ -83,17 +92,18 @@ class Game:
         )
         self.during_input.append(
             lambda x: button.inputhandler(self.pressed, pygame))
+        self.initialize_text(button.text)
 
     # @lru_cache
     def draw_scene(self, camera_x, camera_y):
         # parameters: camera_x, camera_y added so that the lru cache can update when these values update.
         self.screen.fill("black")
-        
+
         self.screen.blit(self.Scene.surface, (-camera_x, -camera_y))
         # self.Scene.tiles.clear()
 
     def run(self):
-        self.run_func()
+        Thread(target=self.run_func).start()
 
     def run_func(self):
         pygame.display.set_caption(self.window_name)
@@ -106,17 +116,16 @@ class Game:
             self.fps = self.clock.get_fps()
             if self.Scene is not None:
                 self.draw_scene(self.Scene.camera_x, self.Scene.camera_y)
-                #self.surface.blit(self.saved_background, (0, 0))
+                # self.surface.blit(self.saved_background, (0, 0))
             self.ui_tasks()
             pygame.display.update()
 
             self.inputs = pygame.event.get()
             self.pressed = pygame.key.get_pressed()
-            self.input_tasks(self.pressed, pygame)
-            if self.Scene is not None:
-                self.Scene.movement_control(self.pressed, pygame)
 
-            # seperate conditional statements as you dont want to update the scene every key press.
+            current_time = time.time()
+            elapsed_time = current_time - self._last_update_time
+            # seperate input checks, otherwise you will have to time the window exit.
             for input in self.inputs:
                 if input.type == pygame.QUIT:
                     return
@@ -124,4 +133,14 @@ class Game:
                     if input.key == pygame.K_F1:
                         # will be useful soon
                         pass
+
+            if elapsed_time > 0.017:
+                if self.Scene is not None:
+                    self.Scene.movement_control(self.pressed, pygame)
+
+                self.input_tasks(self.pressed, pygame)
+                # seperate conditional statements as you dont want to update the scene every key press.
+
+                self._last_update_time = time.time()
+
             self.postflip_tasks()  # not sure if this is the currect place for this
