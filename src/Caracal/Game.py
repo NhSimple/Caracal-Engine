@@ -111,12 +111,13 @@ class Game:
         self.Scene.cache_surface()
         logger.info("OK")
         while True:
-            self.preflip_tasks()
+
             self.dt = self.clock.tick(self.max_fps)
             self.fps = self.clock.get_fps()
             if self.Scene is not None:
                 self.draw_scene(self.Scene.camera_x, self.Scene.camera_y)
                 # self.surface.blit(self.saved_background, (0, 0))
+            self.preflip_tasks()
             self.ui_tasks()
             pygame.display.update()
 
