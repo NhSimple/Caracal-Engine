@@ -26,22 +26,19 @@ class Button:
 
     def mousepos(self): return self.pygame.mouse.get_pos()
 
-    def lockbutton(self):
-        while True:
-            if self.pygame.mouse.get_pressed()[0]:
-                self.state = "DOWN"
-            else:
-                break
-        self.state = "UP"
-
     def inputhandler(self, pressed, key):
-        if self.pygame.mouse.get_pressed()[0]:
+        if self.pygame.mouse.get_pressed()[0] and self.state == "UP":
             if self.rect.collidepoint(self.mousepos()):
                 if self.state != "DOWN":
                     self.on_click()
-                    self.Thread(target=self.lockbutton).start()
             else:
                 pass
+        # captures input frame by frame to see if being pressed or held.
+
+        if self.pygame.mouse.get_pressed()[0]:
+            self.state = "DOWN"
+        else:
+            self.state = "UP"
 
     def on_click(self):
         pass

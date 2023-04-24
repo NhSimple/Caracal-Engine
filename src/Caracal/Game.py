@@ -27,7 +27,7 @@ class Game:
         self.screen = None
         self.Scene = None
         self.clock = pygame.time.Clock()
-        self.max_fps = 600  # 0
+        self.max_fps = 120  # 0
         self._lazy_loads = []
         self._last_update_time = time.time()
 
@@ -57,11 +57,24 @@ class Game:
         for task in self.ui_queue:
             task()
 
-    def instantiate(self, Object):
-        self.before_update.append(lambda: self.screen.blit(
-            Object.sprite, (Object.x, Object.y)))
-        self.before_update.append(Object.update)
-        self.during_input.append(Object.input_update)
+    def instantiate(self, Object, under_scene=None):
+        """
+        usage: Game.instantiate(Object)
+
+        Alternatively, you can choose to make the object a child of the scene.
+        This makes it correspond its position to the scenes camera, essentially
+        it synchronizes the map tiles with the Objects.
+        """
+        if under_scene is not None:
+            self.before_update.append(lambda: self.screen.blit(
+                Object.sprite, (-self.Scene.camera_x + Object.x, -self.Scene.camera_y + Object.y)))
+            self.before_update.append(Object.update)
+            self.during_input.append(Object.input_update)
+        else:
+            self.before_update.append(lambda: self.screen.blit(
+                Object.sprite, (Object.x, Object.y)))
+            self.before_update.append(Object.update)
+            self.during_input.append(Object.input_update)
 
     def _init_window(self):
         logger.info("Initializing window...")
