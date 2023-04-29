@@ -5,8 +5,8 @@ import json
 import random
 import time
 import threading
-from src.Caracal.Mapping.chunk import CHUNK_ATTRIBUTES
-from src.Caracal.Mapping.chunk_generator import ChunkGenerator
+from Caracal.Mapping.chunk import CHUNK_ATTRIBUTES
+from Caracal.Mapping.chunk_generator import ChunkGenerator
 
 
 def threaded(fn):
@@ -20,11 +20,10 @@ def threaded(fn):
     return wrapper
 
 
-class TileManager:
-    def __init__(self, app, tile_sprs, camera, CHUNK_SIZE, CHUNK_RADIUS, TILE_PIXEL_SIZE):
+class ChunkManager:
+    def __init__(self, app, tile_sprs, CHUNK_SIZE, CHUNK_RADIUS, TILE_PIXEL_SIZE):
         self.app = app
         self.tile_sprs = tile_sprs
-        self.camera = camera
         self.centerpos = 0
         self.loaded_chunks: Dict[str, dict] = {}
         self.generated_chunks = []
@@ -35,8 +34,8 @@ class TileManager:
         self.testmode = False
         self.thread = None
         self.inmap = False
-        self.chunk_generator = None  # Not initiliazed until a map is loaded or created
         self.world_root_dir = None
+        self.chunk_generator = None
 
     def load_map(self, root_dir: str):
         self.world_root_dir = root_dir.rstrip("/")

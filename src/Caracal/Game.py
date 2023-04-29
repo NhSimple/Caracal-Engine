@@ -40,6 +40,7 @@ class Game:
     def preflip_tasks(self):
         # accepts functions as tasks to be handled BEFORE updating frames, in a list.
         for task in self.before_update:
+            print(str(task))
             task()
 
     def postflip_tasks(self):
@@ -89,7 +90,7 @@ class Game:
     @lru_cache
     def initialize_scene(self, Scene):
         self.Scene = Scene
-        self.Scene.cache_surface()
+        # self.Scene.cache_surface()
         self.before_update.append(
             lambda: self.screen.blit(self.Scene.surface, (-self.Scene.camera_x, -self.Scene.camera_y)))
 
@@ -108,29 +109,26 @@ class Game:
         self.initialize_text(button.text)
 
     # @lru_cache
-    def draw_scene(self, camera_x, camera_y):
-        # parameters: camera_x, camera_y added so that the lru cache can update when these values update.
+    def draw_scene(self, camera):
+        # parameters: camera added so that the lru cache can update when these values update.
+        if self.Scene is None:
+            self.Scene.cache_surface()
         self.screen.fill("black")
-
-        self.screen.blit(self.Scene.surface, (-camera_x, -camera_y))
-        # self.Scene.tiles.clear()
+        self.screen.blit(self.Scene.surface, (-camera.x, -camera.y))
 
     def run(self):
         Thread(target=self.run_func).start()
 
-    def run_func(self):
+    def run_func(self):  # TODO: simplify and clean up this function.
         pygame.display.set_caption(self.window_name)
         logger.info("Pygame thread started.")
-        self.Scene.cache_surface()
         logger.info("OK")
         while True:
-
             self.dt = self.clock.tick(self.max_fps)
             self.fps = self.clock.get_fps()
-            if self.Scene is not None:
-                self.draw_scene(self.Scene.camera_x, self.Scene.camera_y)
-                # self.surface.blit(self.saved_background, (0, 0))
+            
             self.preflip_tasks()
+            self.draw_scene(self.Scene.camera)
             self.ui_tasks()
             pygame.display.update()
 
