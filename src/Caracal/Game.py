@@ -26,14 +26,17 @@ class Game:
         self._lazy_loads = []
         self._last_update_time = time.time()
         self._define_tasks()
+        self.state = None
+        self.gamestateList = []
 
         if os.path.exists(".caracal"):
             pass
         else:
             logger.info("Creating missing .caracal directory...")
             os.mkdir(".caracal")
+
     def _define_tasks(self):
-        self.draw_tasks = []  # TODO: np arrays
+        self.draw_tasks = []
         self.update_tasks = []
         self.input_tasks = []
 
@@ -65,7 +68,7 @@ class Game:
             task[0](*task[1:])
 
     @lru_cache
-    def initialize_scene(self, Scene, gamestate):
+    def initialize_scene(self, Scene):
         self.Scene = Scene
         _task = lambda: self.screen.blit(self.Scene.surface, (-self.Scene.camera_x, -self.Scene.camera_y))
         self.draw_tasks.append({"task":_task, "gamestate":gamestate})
@@ -142,6 +145,8 @@ class Game:
         for data in self.draw_tasks:
             state_to_draw = data["state"]
             _task = data["task"]
+            if self.state == state_to_draw:
+                _task()
     
     def update(self):
         pass
