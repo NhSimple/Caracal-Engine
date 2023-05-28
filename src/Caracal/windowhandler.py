@@ -15,11 +15,11 @@ class WindowHandler:
         self.name = name
         self.screen = None
         self._init_window()
-    
+
     def _init_window(self):
         self.screen = pygame.display.set_mode(self.size, flags=self.flags)
         self.set_name(self.name)
-    
+
     def set_name(self, name):
         self.name = name
         pygame.display.set_caption(self.name)

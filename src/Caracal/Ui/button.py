@@ -1,8 +1,11 @@
 class Button:
-    def __init__(self, text, x=0, y=0, width=64, height=64, color=(128, 128, 128), text_size=1.5):
+    def __init__(
+        self, text, x=0, y=0, width=64, height=64, color=(128, 128, 128), text_size=1.5
+    ):
         import Caracal.Ui.text as text_mod
         import pygame
         from threading import Thread
+
         self.Thread = Thread
         pygame.init()
         self.pygame = pygame
@@ -21,10 +24,11 @@ class Button:
         self.state = "UP"
 
         # make text size a fraction of the area.
-        self.text.size = self.width*self.height
+        self.text.size = self.width * self.height
         print(self.text.size)
 
-    def mousepos(self): return self.pygame.mouse.get_pos()
+    def mousepos(self):
+        return self.pygame.mouse.get_pos()
 
     def inputhandler(self, pressed, key):
         if self.pygame.mouse.get_pressed()[0] and self.state == "UP":

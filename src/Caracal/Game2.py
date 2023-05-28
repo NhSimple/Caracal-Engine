@@ -2,8 +2,9 @@ import pygame
 import os
 import coloredlogs
 import logging
+
 logger = logging.getLogger(__name__)
-coloredlogs.install(level='DEBUG', logger=logger)
+coloredlogs.install(level="DEBUG", logger=logger)
 
 
 from src.Caracal.gamestates import GameStates
@@ -13,6 +14,7 @@ from src.Caracal.drawhandler import DrawHandler
 
 
 # TODO: Add Scene
+
 
 class Game:
     def __init__(self) -> None:
@@ -29,6 +31,6 @@ class Game:
             self.updateHandler.update()
             self.drawHandler.draw()
             self.dt = self.clock.tick(self.max_fps)
-    
+
     def stop(self):
         self.running = False

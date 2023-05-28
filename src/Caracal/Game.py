@@ -5,12 +5,13 @@ from functools import lru_cache
 import os
 import coloredlogs
 import logging
+
 logger = logging.getLogger(__name__)
-coloredlogs.install(level='DEBUG', logger=logger)
+coloredlogs.install(level="DEBUG", logger=logger)
 
 
 class Game:
-    """ 
+    """
     Must run at 60 fps or fixed update must be set to less than 60 times a second.
     this cannot be because if fps dips below 60 fps updates halt proper too.
     So you must make sure to keep the game performant.
@@ -40,7 +41,9 @@ class Game:
         self.update_tasks = []
         self.input_tasks = []
 
-    def instantiate(self, Object, gamestate, under_scene=None, update_task=None, input_task=None):
+    def instantiate(
+        self, Object, gamestate, under_scene=None, update_task=None, input_task=None
+    ):
         """
         usage: Game.instantiate(Object)
 
@@ -50,19 +53,26 @@ class Game:
         """
         if under_scene is not None:
             _task = lambda: self.screen.blit(
-                Object.sprite, (-self.Scene.camera_x + Object.x, -self.Scene.camera_y + Object.y))
+                Object.sprite,
+                (-self.Scene.camera_x + Object.x, -self.Scene.camera_y + Object.y),
+            )
         else:
-            _task = lambda: self.screen.blit(
-                Object.sprite, (Object.x, Object.y))
+            _task = lambda: self.screen.blit(Object.sprite, (Object.x, Object.y))
         self.draw_tasks.append({"task": _task, "gamestate": gamestate})
-        if update_task: self.update_tasks.append({"task": update_task, "gamestate":gamestate})
-        if input_task: self.input_tasks.append({"task":input_task, "gamestate":gamestate})
+        if update_task:
+            self.update_tasks.append({"task": update_task, "gamestate": gamestate})
+        if input_task:
+            self.input_tasks.append({"task": input_task, "gamestate": gamestate})
 
     def _init_window(self, gamestate, FLAGS=None):
         logger.info("Initializing...")
-        self.screen = pygame.display.set_mode((self.SC_WIDTH, self.SC_HEIGHT), flags=FLAGS)
-        _task = lambda: pygame.display.set_caption(f"{self.window_name} - FPS: {self.fps:.2f} - dt: {self.dt:.2f}")
-        self.update_tasks.append({"task":_task, "gamestate":gamestate})
+        self.screen = pygame.display.set_mode(
+            (self.SC_WIDTH, self.SC_HEIGHT), flags=FLAGS
+        )
+        _task = lambda: pygame.display.set_caption(
+            f"{self.window_name} - FPS: {self.fps:.2f} - dt: {self.dt:.2f}"
+        )
+        self.update_tasks.append({"task": _task, "gamestate": gamestate})
         logger.info(f"Starting Load Tasks...")
         for task in self._lazy_loads:
             task[0](*task[1:])
@@ -70,21 +80,21 @@ class Game:
     @lru_cache
     def initialize_scene(self, Scene):
         self.Scene = Scene
-        _task = lambda: self.screen.blit(self.Scene.surface, (-self.Scene.camera_x, -self.Scene.camera_y))
-        self.draw_tasks.append({"task":_task, "gamestate":gamestate})
+        _task = lambda: self.screen.blit(
+            self.Scene.surface, (-self.Scene.camera_x, -self.Scene.camera_y)
+        )
+        self.draw_tasks.append({"task": _task, "gamestate": gamestate})
 
     def initialize_text(self, text, gamestate):
         # given screen and not surface because it is supposed to be higher than scene in the hierarchy.
         _task = lambda: self.screen.blit(text.text, text.text_rect)
-        self.ui_queue.append({"task":_task, "gamestate":gamestate})
+        self.ui_queue.append({"task": _task, "gamestate": gamestate})
 
     def initialize_button(self, button):
         self.ui_queue.append(
-            lambda: pygame.draw.rect(
-                self.screen, button.color, button.rect)
+            lambda: pygame.draw.rect(self.screen, button.color, button.rect)
         )
-        self.during_input.append(
-            lambda x: button.inputhandler(self.pressed, pygame))
+        self.during_input.append(lambda x: button.inputhandler(self.pressed, pygame))
         self.initialize_text(button.text)
 
     # @lru_cache
@@ -103,7 +113,7 @@ class Game:
         while True:
             self.dt = self.clock.tick(self.max_fps)
             self.fps = self.clock.get_fps()
-            
+
             self.preflip_tasks()
             self.draw_scene(self.Scene.camera)
             self.ui_tasks()
@@ -140,14 +150,14 @@ class Game:
             self.dt = self.clock.tick(self.max_fps)
             self.dt /= 1000  # convert to seconds
             self.draw()
-    
+
     def draw(self):
         for data in self.draw_tasks:
             state_to_draw = data["state"]
             _task = data["task"]
             if self.state == state_to_draw:
                 _task()
-    
+
     def update(self):
         pass
 
