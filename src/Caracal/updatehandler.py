@@ -3,6 +3,7 @@ import pygame
 
 class UpdateHandler:
     """Needs work for other events such as mouse events, KEYUP etc."""
+
     def __init__(self, state, stopAppFunc: function) -> None:
         self.update_tasks = []
         self.input_tasks = []
