@@ -1,7 +1,7 @@
 import pygame
 import typing
 
-from src.Caracal.Mapping.chunkmanager import ChunkManager
+from Caracal.Mapping.chunkManager2 import ChunkManager
 from src.Caracal.Entities.entitymanager import EntityManager
 
 

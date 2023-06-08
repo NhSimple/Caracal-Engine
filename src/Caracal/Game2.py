@@ -7,18 +7,16 @@ logger = logging.getLogger(__name__)
 coloredlogs.install(level="DEBUG", logger=logger)
 
 
-from src.Caracal.gamestates import GameStates
-from src.Caracal.windowhandler import WindowHandler
-from src.Caracal.updatehandler import UpdateHandler
-from src.Caracal.drawhandler import DrawHandler
+from Caracal.gameStates import GameStates
+from Caracal.windowHandler import WindowHandler
+from Caracal.updateHandler import UpdateHandler
+from Caracal.drawHandler import DrawHandler
 
-
-# TODO: Add Scene
 
 
 class Game:
     def __init__(self) -> None:
-        self.windowHandler = WindowHandler()
+        self.windowHandler = WindowHandler(name="Caracal Test Window")
         self.gameStates = GameStates()
         self.clock = pygame.time.Clock()
         self.max_fps = 120  # 0
