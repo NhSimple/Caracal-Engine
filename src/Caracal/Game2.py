@@ -15,12 +15,12 @@ from Caracal.drawHandler import DrawHandler
 
 
 class Game:
-    def __init__(self) -> None:
-        self.windowHandler = WindowHandler(name="Caracal Test Window")
-        self.gameStates = GameStates()
+    def __init__(self, windowHandler: WindowHandler) -> None:
+        self.windowHandler = windowHandler
+        self.gameStates = GameStates
         self.clock = pygame.time.Clock()
         self.max_fps = 120  # 0
-        self.updateHandler = UpdateHandler(self.gameStates.ANY)
+        self.updateHandler = UpdateHandler(self.gameStates.ANY, self)
         self.drawHandler = DrawHandler(self.gameStates.ANY)
 
     def run(self):
@@ -29,6 +29,8 @@ class Game:
             self.updateHandler.update()
             self.drawHandler.draw()
             self.dt = self.clock.tick(self.max_fps)
+        pygame.quit()
+        raise SystemExit
 
     def stop(self):
         self.running = False
