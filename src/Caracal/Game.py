@@ -18,7 +18,7 @@ class Game:
     def __init__(self, windowHandler: WindowHandler) -> None:
         self.windowHandler = windowHandler
         self.gameStates = GameStates
-        self.max_fps = 120  # 0
+        self.max_fps = 120
         self.updateHandler = UpdateHandler(self.gameStates.ANY, self)
         self.drawHandler = DrawHandler(self.gameStates.ANY)
 

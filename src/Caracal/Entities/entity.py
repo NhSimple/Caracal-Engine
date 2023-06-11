@@ -1,9 +1,4 @@
-from enum import IntEnum, auto
-
-
-class ReturnCodes(IntEnum):
-    NORMAL = None
-    DELETED = auto()
+from src.Caracal.Entities.returnCodes import ReturnCodes
 
 
 class Entity:

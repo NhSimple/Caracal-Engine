@@ -15,7 +15,7 @@ class UpdateHandler:
         self.dt = None
 
     def _(self):
-        from Caracal.Game import Game
+        from Caracal.game import Game
         self.app: Game
         # ignore this: Used to prevent circular importing & have syntax highlighting for app attributes
 

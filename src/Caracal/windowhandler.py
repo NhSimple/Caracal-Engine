@@ -11,13 +11,13 @@ class WindowHandler:
             name (str, optional): Window name. Defaults to "Caracal Test Window".
         """
         self.flags = flags
-        self.size = size
+        self.screenSize = size
         self.name = name
         self.screen = None
         self._init_window()
 
     def _init_window(self):
-        self.screen = pygame.display.set_mode(self.size, flags=self.flags)
+        self.screen = pygame.display.set_mode(self.screenSize, flags=self.flags)
         self.set_name(self.name)
 
     def set_name(self, name):

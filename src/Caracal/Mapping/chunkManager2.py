@@ -4,6 +4,8 @@ import threading
 import json
 import os
 
+from src.Caracal.Mapping.chunk import Chunk
+
 
 def threaded(fn):
     def wrapper(*args, **kwargs):
@@ -17,15 +19,13 @@ def threaded(fn):
 
 class ChunkManager:
     def __init__(self) -> None:
-        self.map: typing.Dict[typing.List[typing.List[int]]] = None
+        #                    {   (0,0):ChunkObject               }
+        self.map: typing.Dict[typing.List[int, int], Chunk] = None
         self.worldFolderDir: str = "worlds"
         self.mapName: str = None
         self.generatedChunks: typing.List[typing.Tuple[int, int]] = None
 
     def generateChunk(self, chunkPos: typing.Tuple[int, int]):
-        pass
-
-    def parseMap(self, mapdata: dict):
         pass
 
     def loadMap(self, mapName: str):
@@ -34,6 +34,9 @@ class ChunkManager:
         with open(path, "r") as f:
             data = json.load(f)
         self.parseMap(data)
+
+    def parseMap(self, mapdata: dict):
+        pass
 
     def saveMap(self):
         pass
@@ -45,9 +48,14 @@ class ChunkManager:
         pass
 
     def draw(self):
-        pass
+        rect = createRect(someChunk[0])
+        for tile in someChunk:  # get the entire rect size of the chunk
+            tileRect = createRect(tile)
+            rect = rect.union(tileRect)
 
+        if rect.collideRect(screenRect):  # visible, draw chunk
+            pass
+        else:  # not visible
+            pass
 
-if __name__ == "__main__":
-    mg = ChunkManager()
-    mg.loadMap("test")
+        chunksToDraw = None
