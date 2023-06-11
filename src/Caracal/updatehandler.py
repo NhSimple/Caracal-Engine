@@ -6,13 +6,21 @@ class UpdateHandler:
 
     def __init__(self, state, app) -> None:
         self.app = app
+        self.clock = pygame.time.Clock()
         self.update_tasks = []
         self.input_tasks = {
             pygame.QUIT: {"func": self.app.stop}
         }
         self.state = state
+        self.dt = None
+
+    def _(self):
+        from Caracal.Game import Game
+        self.app: Game
+        # ignore this: Used to prevent circular importing & have syntax highlighting for app attributes
 
     def update(self):
+        self.dt = self.clock.tick(self.app.max_fps)
         for task in self.update_tasks:
             state_to_draw = task["state"]
             _task = task["task"]
