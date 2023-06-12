@@ -4,6 +4,7 @@ import opensimplex
 class ChunkGenerator:
     def __init__(self, terrainGenerator, seed, CONST):
         self.terrainGenerator = terrainGenerator  # Rust terrain generator module
+        self.generatedChunks = []
         self.seed = seed
         self.CONST = CONST
         opensimplex.seed(seed)
