@@ -6,7 +6,7 @@ import random
 import time
 import threading
 from Caracal.Mapping.chunk import CHUNK_ATTRIBUTES
-from Caracal.Mapping.chunk_generator import ChunkGenerator
+from Caracal.Mapping.chunkGenerator import ChunkGenerator
 
 
 def threaded(fn):

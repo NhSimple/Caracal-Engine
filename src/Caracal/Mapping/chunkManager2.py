@@ -4,6 +4,7 @@ import threading
 import json
 import os
 
+from src.Caracal.Mapping.chunkGenerator import ChunkGenerator
 from src.Caracal.Mapping.chunk import Chunk
 
 
@@ -19,14 +20,16 @@ def threaded(fn):
 
 class ChunkManager:
     def __init__(self) -> None:
-        #                    {   (0,0):ChunkObject               }
+        #                 {  (0, 0) : ChunkObject               }
         self.map: typing.Dict[typing.List[int, int], Chunk] = None
         self.worldFolderDir: str = "worlds"
         self.mapName: str = None
         self.generatedChunks: typing.List[typing.Tuple[int, int]] = None
+        self.chunkGenerator = ChunkGenerator()
 
-    def generateChunk(self, chunkPos: typing.Tuple[int, int]):
-        pass
+    def createChunk(self, chunkPos: typing.Tuple[int, int]):
+        chunk = self.chunkGenerator.generate_chunk(chunkPos)
+        self.map[chunkPos] = chunk
 
     def loadMap(self, mapName: str):
         self.mapName = mapName
@@ -48,9 +51,12 @@ class ChunkManager:
         pass
 
     def draw(self):
-        rect = createRect(someChunk[0])
-        for tile in someChunk:  # get the entire rect size of the chunk
-            tileRect = createRect(tile)
+        pass
+
+    def _calculateChunksToDraw(self, chunk: Chunk):
+        rect: pygame.Rect = createRect(chunk.terrainData[0])  # get the first element
+        for tile in chunk.terrainData:  # get the entire rect size of the chunk
+            tileRect: pygame.Rect = createRect(tile)
             rect = rect.union(tileRect)
 
         if rect.collideRect(screenRect):  # visible, draw chunk

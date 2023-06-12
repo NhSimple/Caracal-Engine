@@ -1,7 +1,7 @@
 import typing
 
 # True means that this attribute will be saved to the chunk file.
-CHUNK_ATTRIBUTES = {"pos": True, "terraindata": True, "surface": False}
+CHUNK_ATTRIBUTES = {"pos": True, "terrainData": True, "surface": False}
 
 
 class Chunk:
