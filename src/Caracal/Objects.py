@@ -1,16 +1,16 @@
 import coloredlogs
 import logging
+
 logger = logging.getLogger(__name__)
-coloredlogs.install(level='DEBUG', logger=logger)
+coloredlogs.install(level="DEBUG", logger=logger)
 
 
 class GameObject:
-    """    
-
-    """
+    """ """
 
     def __init__(self, sprite, x=0, y=0):
         import pygame
+
         self.pygame = pygame
         self.x = x
         self.y = y
