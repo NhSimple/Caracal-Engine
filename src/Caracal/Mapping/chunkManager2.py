@@ -4,8 +4,8 @@ import threading
 import json
 import os
 
-from src.Caracal.Mapping.chunkGenerator import ChunkGenerator
-from src.Caracal.Mapping.chunk import Chunk
+from Caracal.Mapping.chunkGenerator import ChunkGenerator
+from Caracal.Mapping.chunk import Chunk
 
 
 def threaded(fn):

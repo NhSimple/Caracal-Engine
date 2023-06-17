@@ -1,6 +1,6 @@
 import typing
 import pygame
-from Caracal.Mapping.chunk_manager_OLD import ChunkManager
+from Caracal.Mapping.chunkManager2 import ChunkManager
 
 
 class IsometricScene:

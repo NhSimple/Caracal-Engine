@@ -1,3 +1,7 @@
+from Caracal.drawhandler import DrawHandler
+from Caracal.updatehandler import UpdateHandler
+from Caracal.windowhandler import WindowHandler
+from Caracal.gamestates import GameStates
 import pygame
 import os
 import coloredlogs
@@ -5,13 +9,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level="DEBUG", logger=logger)
-
-
-from Caracal.gameStates import GameStates
-from Caracal.windowHandler import WindowHandler
-from Caracal.updateHandler import UpdateHandler
-from Caracal.drawHandler import DrawHandler
-
 
 
 class Game:
