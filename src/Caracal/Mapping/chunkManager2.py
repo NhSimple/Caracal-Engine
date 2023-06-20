@@ -47,7 +47,7 @@ class ChunkManager:
     def parseMap(self, mapData: dict):
         self.chunkGenerator.seed = mapData["mapSeed"]
         self.chunkGenerator.generatedChunks.extend(mapData["generatedChunks"])
-        self.app#.player.stuff = mapData["player"]
+        # self.app.player.stuff = mapData["player"]
 
     def saveMap(self):
         path = os.path.join(os.getcwd(), self.worldFolderDir, self.mapName, "info.json")

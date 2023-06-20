@@ -37,7 +37,8 @@ class IsometricScene:
 
     def cache_surface(
         self,
-    ):  # TODO: There shouldnt be both self.tiles and self.map, there should only be one
+    ):  
+        # TODO: There shouldnt be both self.tiles and self.map, there should only be one
         self.surface = pygame.Surface(
             (self.mapwidth * self.tile_width, self.mapheight * 0.5 * self.tile_height)
         )

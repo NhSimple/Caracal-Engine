@@ -1,7 +1,7 @@
-from Caracal.drawhandler import DrawHandler
-from Caracal.updatehandler import UpdateHandler
-from Caracal.windowhandler import WindowHandler
-from Caracal.gamestates import GameStates
+from Caracal.drawHandler import DrawHandler
+from Caracal.updateHandler import UpdateHandler
+from Caracal.windowHandler import WindowHandler
+from Caracal.gameStates import GameStates
 import pygame
 import os
 import coloredlogs
